@@ -1,0 +1,21 @@
+<h1> Login page</h1>
+<form action= "/login" method="POST">
+    <div>
+        <label for="username">Userame</label>
+        <input type="text" id="username" name="username"/>
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password"/>
+    </div>
+    <div>
+        <input type="radio" id="admin" name="type" value="admin">
+        <label for="admin">admin</label><br>
+        <input type="radio" id="profesor" name="type" value="profesor">
+        <label for="profesor">prof</label><br>
+        <input type="radio" id="user" name="type" value="user">
+        <label for="user">user</label>
+    </div>
+    <button type="submit">Login</button>
+</form>
+<a href="/signup">Signup</a>

@@ -1,0 +1,62 @@
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</head>
+<%- include('layouts/nav') %>
+
+<div class="container mt-5">
+    <% if (students) { %>
+        <h2> Students table </h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Username</th>
+              <th scope="col">Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% students.forEach(function(student) { %>
+              <tr>
+                <th scope="row"><%= student.id %></th>
+                <td><%= student.first_name %></td>
+                <td><%= student.last_name %></td>
+                <td><%= student.username %></td>
+                <td><%= student.email %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+
+      <% if (professors) { %>
+        <h2> Professors table </h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Username</th>
+              <th scope="col">Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% professors.forEach(function(professor) { %>
+              <tr>
+                <th scope="row"><%= professor.id %></th>
+                <td><%= professor.first_name %></td>
+                <td><%= professor.last_name %></td>
+                <td><%= professor.username %></td>
+                <td><%= professor.email %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
+</div>
+  
+<%- include('layouts/footer') %>
