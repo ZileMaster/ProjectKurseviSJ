@@ -9,6 +9,7 @@ const profesor = require('./models/').profesor;
 const session = require('express-session');
 const cookieParser = require("cookie-parser");
 const course = require('./models').course;
+const dashboard = require('./controllers/controller.dashboard');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -45,36 +46,49 @@ app.get('/', (req, res) => {
     res.render('index.ejs')
 });
 
-app.get('/dashboard', (req, res) => {
-  if (req.session.isAdmin) {
-    var userStud
-    student.findAll()
-      .then((students) => {
-        userStud = students;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-      profesor.findAll()
-        .then((professors) => {
-          res.render('dashboard.ejs', { professors: professors, students: userStud})
-        })
-        .catch((error) => {
-        console.error(error)
-      });
-  }else if(req.session.isProf){
-    student.findAll()
-      .then((students) => {
-        res.render('dashboard.ejs', { students: userStud })
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-   else {
-    res.redirect('/login');
-  }
-});
+app.get('/dashboard', dashboard);
+
+// app.get('/dashboard', (req, res) => {
+//   if (req.session.isAdmin) {
+//     var userStud
+//     student.findAll()
+//       .then((students) => {
+//         userStud = students;
+//       })
+//       .catch((error) => {
+//         console.error(error);
+//       });
+//       profesor.findAll()
+//         .then((professors) => {
+//           res.render('dashboard.ejs', { professors: professors, students: userStud, student: null});
+//         })
+//         .catch((error) => {
+//         console.error(error)
+//       });
+//   }else if(req.session.isProf){
+//     var userStud;
+//     student.findAll()
+//       .then((students) => {
+//         userStud = students;
+//         res.render('dashboard.ejs', { students: userStud , professors: null, student:null});
+//       })
+//       .catch((error) => {
+//         console.error(error);
+//       });
+//   }else if(req.session.isStud){
+//     student.findOne({
+//       where: {
+//         id: req.session.studentId
+//       }
+//     }).then((student) => {
+//       res.render('dashboard.ejs', { professors: null, students: null, student: student});
+//     }).catch((error) => {
+//       console.error(error);
+//     });
+//     }else {
+//     res.redirect('/login');
+//   }
+// });
 
 app.get('/courses', (req, res) => {
   var courses

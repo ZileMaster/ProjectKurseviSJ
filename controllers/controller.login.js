@@ -8,7 +8,7 @@ const session = require('express-session');
 router.post('/login', (req, res) => {
         
         var user;  
-        
+        var errorCount = 0;
         admin.findAll({
             where: {
                 username: req.body.username,
@@ -31,7 +31,7 @@ router.post('/login', (req, res) => {
               res.redirect('/dashboard');
             } else {
               // If no admin is found, redirect to the login page
-              res.redirect('/login');
+              errorCount ++;
             }
           })
         .catch((error) => {
@@ -45,15 +45,15 @@ router.post('/login', (req, res) => {
             }
         })
         .then((users) => {
-            user = users[0];
-            if (user != null) {
-                res.redirect('/dashboard');
-                console.log(`user: ${user.first_name} ${user.last_name}`);
-                return user;
+            // If an admin is found, set the isAdmin property in the session object and redirect to the dashboard
+            if (users.length > 0) {
+              req.session.isProf = true;
+              res.redirect('/dashboard');
             } else {
-                console.log('logging...');
+              // If no admin is found, redirect to the login page
+              errorCount ++;
             }
-        })
+          })
         .catch((error) => {
             console.error(error);
         });
@@ -65,20 +65,21 @@ router.post('/login', (req, res) => {
           }
       })
       .then((users) => {
-          user = users[0];
-          if (user != null) {
-              res.redirect('/dashboard');
-              console.log(`user: ${user.first_name} ${user.last_name}`);
-              return user;
-          } else {
-              console.log('logging...');
-          }
+        // If an admin is found, set the isAdmin property in the session object and redirect to the dashboard
+        if (users.length > 0) {
+          req.session.isStud = true;
+          req.session.studentId = users[0].id
+          res.redirect('/dashboard');
+        } else {
+          // If no admin is found, redirect to the login page
+          errorCount ++;
+        }
       })
       .catch((error) => {
           console.error(error);
       });
 
-      if(user === null){
+      if(errorCount === 3){
         console.log('error while logging in');
         res.redirect('/login');
       }

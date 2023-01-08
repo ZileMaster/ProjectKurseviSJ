@@ -57,6 +57,11 @@
         </tbody>
       </table>
     <% } %>
+    <% if(student) { %>
+      <div>
+        <h2>Welcome, <%= student.first_name %> <%= student.last_name %></h2>
+      </div>
+    <% } %>
 </div>
   
 <%- include('layouts/footer') %>
