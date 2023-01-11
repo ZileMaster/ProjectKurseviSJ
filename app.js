@@ -64,65 +64,71 @@ app.get('/', (req, res) => {
     res.render('index.ejs');
 });
 
-app.post('/login', (req, res) => {
-  // Find the user in the database
-  admin.findOne({
-    where: {
-      username: req.body.username,
-      account_type: 'admin'
-    }
-  }).then((admin) => {
-    // If an admin is found, create a JWT for the user and send it in the response
-    if (admin) {
-      const token = jwt.sign({ id: admin.id, isAdmin: true }, secretKey, { expiresIn: 86400 }); // expires in 24 hours
-      // set the JWT as a cookie
-      res.json({ token: token });
-      // redirect the client to the /dashboard page
-      //res.render('index', { admin: admin });
-      console.log(admin.first_name, admin.last_name);
-    } else {
-      // If no user is found, try searching for a professor
-      profesor.findOne({
-        where: {
-          username: req.body.username,
-          type: 'profesor'
-        }
-      }).then((profesor) => {
-        // If a professor is found, create a JWT for the user and send it in the response
-        if (profesor) {
-          const token = jwt.sign({ id: profesor.id, isProf: true }, secretKey, { expiresIn: 86400 }); // expires in 24 hours
-          // set the JWT as a cookie
-          res.json({ token: token });
-          // redirect the client to the /dashboard page
-          //res.render('index', { profesor });
-          console.log(profesor.first_name, profesor.last_name);
-        } else {
-          // If no user is found, try searching for a student
-          student.findOne({
-            where: {
-              username: req.body.username,
-              type: 'student'
-            }
-          }).then((student) => {
-            // If a student is found, create a JWT for the user and send it in the response
-            if (student) {
-              const token = jwt.sign({ id: student.id, isStud: true }, secretKey, { expiresIn: 86400 }); // expires in 24 hours
-              // set the JWT as a cookie
-              res.json({ token: token });
-              // redirect the client to the /dashboard page
-              //res.render('index', { student });
-              console.log(student.first_name, student.last_name);
-            } else {
-              // If no user is found, return an error
-              return res.status(404).send({ auth: false, message: 'Username or password is incorrect.' });
-            }
-          });
-        }
-      });
-    }
-  });
-});
+const { register } = require('./controllers/controller.register');
 
+const { login } = require('./controllers/controller.login');
+
+app.post('/register', register);
+// app.post('/login', (req, res) => {
+//   // Find the user in the database
+//   admin.findOne({
+//     where: {
+//       username: req.body.username,
+//       account_type: 'admin'
+//     }
+//   }).then((admin) => {
+//     // If an admin is found, create a JWT for the user and send it in the response
+//     if (admin) {
+//       const token = jwt.sign({ id: admin.id, isAdmin: true }, secretKey, { expiresIn: 86400 }); // expires in 24 hours
+//       // set the JWT as a cookie
+//       res.json({ token: token });
+//       // redirect the client to the /dashboard page
+//       //res.render('index', { admin: admin });
+//       console.log(admin.first_name, admin.last_name);
+//     } else {
+//       // If no user is found, try searching for a professor
+//       profesor.findOne({
+//         where: {
+//           username: req.body.username,
+//           type: 'profesor'
+//         }
+//       }).then((profesor) => {
+//         // If a professor is found, create a JWT for the user and send it in the response
+//         if (profesor) {
+//           const token = jwt.sign({ id: profesor.id, isProf: true }, secretKey, { expiresIn: 86400 }); // expires in 24 hours
+//           // set the JWT as a cookie
+//           res.json({ token: token });
+//           // redirect the client to the /dashboard page
+//           //res.render('index', { profesor });
+//           console.log(profesor.first_name, profesor.last_name);
+//         } else {
+//           // If no user is found, try searching for a student
+//           student.findOne({
+//             where: {
+//               username: req.body.username,
+//               type: 'student'
+//             }
+//           }).then((student) => {
+//             // If a student is found, create a JWT for the user and send it in the response
+//             if (student) {
+//               const token = jwt.sign({ id: student.id, isStud: true }, secretKey, { expiresIn: 86400 }); // expires in 24 hours
+//               // set the JWT as a cookie
+//               res.json({ token: token });
+//               // redirect the client to the /dashboard page
+//               //res.render('index', { student });
+//               console.log(student.first_name, student.last_name);
+//             } else {
+//               // If no user is found, return an error
+//               return res.status(404).send({ auth: false, message: 'Username or password is incorrect.' });
+//             }
+//           });
+//         }
+//       });
+//     }
+//   });
+// });
+
+app.post('/login', login);
 
 app.get('/login', (req, res) => {
   res.render('login.ejs');
@@ -181,7 +187,7 @@ app.get('/courses', (req, res) => {
       })
 });
 
-app.get('/logout', (req, res) => {
+/*app.get('/logout', (req, res) => {
   // Clear the user's JWT from the request header
   req.headers['x-access-token'] = null;
   res.redirect('/');
@@ -197,6 +203,6 @@ app.get('/contact', (req, res) => {
 
 app.get('/about', (req, res) => {
     res.render('about.ejs');
-});
+});*/
 
 app.listen(PORT, console.log(`Server started on port ${PORT}`));

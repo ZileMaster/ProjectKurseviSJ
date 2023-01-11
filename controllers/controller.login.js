@@ -1,10 +1,50 @@
-// const express = require('express');
-// const router = express.Router();
-// const admin = require('../models/').admin;
-// const profesor = require('../models/').profesor;
-// const student = require('../models/').student;
-// const session = require('express-session');
-// const jwt = require('jsonwebtoken');
+const express = require('express');
+const router = express.Router();
+const admin = require('../models/').admin;
+const profesor = require('../models/').profesor;
+const student = require('../models/').student;
+const session = require('express-session');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
+const login = async (req, res) => {
+    const { email, password, userType } = req.body;
+
+    try {
+        // Find the user in the appropriate table based on userType
+        let user;
+        if (userType === 'admin') {
+            user = await admin.findOne({ username });
+        } else if (userType === 'professor') {
+            user = await profesor.findOne({ username });
+        } else if (userType === 'student') {
+            user = await student.findOne({ username });
+        }
+
+        // If no user is found, return an error
+        if (!user) {
+            return res.status(401).json({ message: 'Username or password is incorrect' });
+        }
+
+        // Compare the plaintext password with the hashed password in the database
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Username or password is incorrect' });
+        }
+
+        //Create JWT token
+        const token = await jwt.sign({id: user._id}, 'yoursecretkey', { expiresIn: '24h' });
+
+        // Send the token back to the client
+        return res.json({ token });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error logging in' });
+    }
+};
+
+module.exports = { login };
 
 // // router.post('/login', (req, res) => {
    
