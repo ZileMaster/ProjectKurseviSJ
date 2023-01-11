@@ -8,17 +8,17 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 const login = async (req, res) => {
-    const { email, password, userType } = req.body;
+    const { username, password, userType } = req.body.user;
 
     try {
         // Find the user in the appropriate table based on userType
         let user;
         if (userType === 'admin') {
-            user = await admin.findOne({ username });
+            user = await admin.findOne({ where: {username: username }});
         } else if (userType === 'professor') {
-            user = await profesor.findOne({ username });
+            user = await profesor.findOne({ where: {username: username }});
         } else if (userType === 'student') {
-            user = await student.findOne({ username });
+            user = await student.findOne({ where: {username: username }});
         }
 
         // If no user is found, return an error
@@ -33,7 +33,7 @@ const login = async (req, res) => {
         }
 
         //Create JWT token
-        const token = await jwt.sign({id: user._id}, 'yoursecretkey', { expiresIn: '24h' });
+        const token = await jwt.sign({id: user.id}, 'yoursecretkey', { expiresIn: '24h' });
 
         // Send the token back to the client
         return res.json({ token });

@@ -4,30 +4,31 @@ const student = require('../models/').student;
 const profesor = require('../models/').profesor;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const sequelize = require('sequelize')
 
 const register = async (req, res) => {
-    const { first_name, last_name, username, email, password, userType } = req.body;
+    const { first_name, last_name, username, email, password, userType } = req.body.user;
 
     try {
         // Check if email is already taken
         let existingUser;
         if (userType === 'student') {
-            existingUser = await student.findOne({ username });
+            existingUser = await student.findOne({ where: {email: email }});
         } else if (userType === 'professor') {
-            existingUser = await profesor.findOne({ username });
+            existingUser = await profesor.findOne({ where: {email: email }});
         }
 
         if (existingUser) {
             return res.status(400).json({ message: 'User is already taken' });
         }
-
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
+        
 
         // Create a new user record in the appropriate table
         let newUser;
         if (userType === 'student') {
-            newUser = new student({
+            newUser = student.build({
                 first_name,
                 last_name,
                 username,
@@ -40,7 +41,7 @@ const register = async (req, res) => {
 
             });
         } else if (userType === 'professor') {
-            newUser = new profesor({
+            newUser = profesor.build({
                 first_name,
                 last_name,
                 username,
@@ -49,6 +50,7 @@ const register = async (req, res) => {
             });
         }
 
+        console.log(newUser)
         // Save the new user to the database
         await newUser.save();
 
