@@ -8,8 +8,11 @@ const student = require('./models/').student;
 const profesor = require('./models/').profesor;
 const cookieParser = require("cookie-parser");
 const course = require('./models').course;
-const dashboard = require('./controllers/controller.dashboard');
+const { dashboard } = require('./controllers/controller.dashboard');
 const jwt = require('jsonwebtoken');
+const { authMiddleware } = require('./controllers/controller.auth');
+const coursesRoutes = require('./controllers/controller.course');
+const bcrypt = require("bcrypt");
 
 const secretKey = "88b70c6461025630d4754af0aac3bf99c8128e2e922b2ab42470c7700c013e7b32d8d1fd5dd55f01c3d6dc438c6511d453269dd743b84513074e9425e30eb1c9";
 
@@ -32,43 +35,88 @@ app.use(express.static(__dirname));
 //cookie parser
 app.use(cookieParser());
 
+// //podsetnik za mene password je SecretPass1389! za admina! I profesorForTest1234 za profesora!!
+// //kad sam pravio prve migracije nisam sa bcrypt lozinke nego kao obican string
+// async function encryptProfPassword() {
+//   // Find the admin account in the database
+//   const profAccount = await profesor.findOne({ where: { username: "profesorTester1"} });
+//   // Hash the admin's plain text password
+//   const hashedPassword = await bcrypt.hash(profAccount.password, 10);
+//   // Update the admin account's password in the database
+//   await profesor.update({ password: hashedPassword }, { where: { id: profAccount.id } });
+// }
+
+// encryptProfPassword();
+
 //test
 db.authenticate()
   .then(() => console.log('Database connected...'))
   .catch(err => console.log('Error: ' + err));
-
-// Define a middleware function to verify the JWT
-function verifyToken(req, res, next) {
-  // Get the JWT from the request header
-  const token = req.headers['x-access-token'];
-  if (!token) {
-    // If the JWT is missing, return an error
-    return res.status(401).send({ auth: false, message: 'No token provided.' });
-  }
-
-  // Verify the JWT and decode the user's information
-  jwt.verify(token, secretKey, (err, decoded) => {
-    if (err) {
-      // If the JWT is invalid, return an error
-      return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-    }
-
-    // Set the user's information in the request object
-    req.user = decoded;
-    // Call the next middleware function
-    next();
-  });
-}
 
 app.get('/', (req, res) => {
     res.render('index.ejs');
 });
 
 const { register } = require('./controllers/controller.register');
-
 const { login } = require('./controllers/controller.login');
 
 app.post('/register', register);
+app.post('/login', login);
+
+app.get('/login', (req, res) => {
+  res.render('login.ejs');
+});
+
+console.log(authMiddleware, dashboard)
+
+app.get('/dashboard', authMiddleware, dashboard);
+
+app.use('/courses', authMiddleware, coursesRoutes)
+
+// app.get('/dashboard', verifyToken, (req, res) => {
+//   if (req.user.isAdmin) {
+//     var userStud
+//     student.findAll()
+//       .then((students) => {
+//         userStud = students;
+//       })
+//       .catch((error) => {
+//         console.error(error);
+//       });
+//       profesor.findAll()
+//         .then((professors) => {
+//           res.render('dashboard.ejs', { professors: professors, students: userStud, student: null});
+//         })
+//         .catch((error) => {
+//         console.error(error)
+//       });
+//   } else if(req.user.isProf) {
+//     var userStud;
+//     student.findAll()
+//       .then((students) => {
+//         userStud = students;
+//         res.render('dashboard.ejs', { students: userStud , professors: null, student:null});
+//       })
+//       .catch((error) => {
+//         console.error(error);
+//       });
+//   } else if(req.user.isStud) {
+//     student.findOne({
+//       where: {
+//         id: req.user.id
+//       }
+//     }).then((student) => {
+//       res.render('dashboard.ejs', { professors: null, students: null, student: student});
+//     }).catch((error) => {
+//       console.error(error);
+//     });
+//     } else {
+//     res.redirect('/login');
+//   }
+// });
+
+
+
 // app.post('/login', (req, res) => {
 //   // Find the user in the database
 //   admin.findOne({
@@ -128,64 +176,40 @@ app.post('/register', register);
 //   });
 // });
 
-app.post('/login', login);
+// app.get('/courses', (req, res) => {
+//   var courses
+//   course.findAll()
+//     .then((courses) => {
+//       res.render('courses.ejs',{courses: courses});
+//     })
+//       .catch((error) => {
+//         console.error(error);
+//       })
+// });
 
-app.get('/login', (req, res) => {
-  res.render('login.ejs');
-});
 
-app.get('/dashboard', verifyToken, (req, res) => {
-  if (req.user.isAdmin) {
-    var userStud
-    student.findAll()
-      .then((students) => {
-        userStud = students;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-      profesor.findAll()
-        .then((professors) => {
-          res.render('dashboard.ejs', { professors: professors, students: userStud, student: null});
-        })
-        .catch((error) => {
-        console.error(error)
-      });
-  } else if(req.user.isProf) {
-    var userStud;
-    student.findAll()
-      .then((students) => {
-        userStud = students;
-        res.render('dashboard.ejs', { students: userStud , professors: null, student:null});
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  } else if(req.user.isStud) {
-    student.findOne({
-      where: {
-        id: req.user.id
-      }
-    }).then((student) => {
-      res.render('dashboard.ejs', { professors: null, students: null, student: student});
-    }).catch((error) => {
-      console.error(error);
-    });
-    } else {
-    res.redirect('/login');
-  }
-});
+// // Define a middleware function to verify the JWT
+// function verifyToken(req, res, next) {
+//   // Get the JWT from the request header
+//   const token = req.headers['x-access-token'];
+//   if (!token) {
+//     // If the JWT is missing, return an error
+//     return res.status(401).send({ auth: false, message: 'No token provided.' });
+//   }
 
-app.get('/courses', (req, res) => {
-  var courses
-  course.findAll()
-    .then((courses) => {
-      res.render('courses.ejs',{courses: courses});
-    })
-      .catch((error) => {
-        console.error(error);
-      })
-});
+//   // Verify the JWT and decode the user's information
+//   jwt.verify(token, secretKey, (err, decoded) => {
+//     if (err) {
+//       // If the JWT is invalid, return an error
+//       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+//     }
+
+//     // Set the user's information in the request object
+//     req.user = decoded;
+//     // Call the next middleware function
+//     next();
+//   });
+// }
 
 /*app.get('/logout', (req, res) => {
   // Clear the user's JWT from the request header

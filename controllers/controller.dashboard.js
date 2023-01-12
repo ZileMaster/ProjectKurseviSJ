@@ -6,6 +6,27 @@ const student = require('../models/').student;
 const profesor = require('../models/').profesor;
 const session = require('express-session');
 
+const dashboard = async(req, res, next) => {
+  try {
+    let data;
+    if (req.user.role === 'admin') {
+        data = await Promise.all([
+            student.findAll({ attributes: ["first_name", "last_name", "username", "email"] }),
+            profesor.findAll({ attributes: ["first_name", "last_name", "username", "email"] })
+        ]);
+    } else if (req.user.role === 'professor') {
+        data = await student.findAll({ attributes: ["first_name", "last_name", "username", "email"] });
+    } else if (req.user.role === 'student') {
+      data = await student.findOne({ where: { id: req.user.id }, attributes: ["first_name", "last_name", "username", "email"] });
+      console.log(data)
+    }
+    res.json({ data });
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+}
+
+module.exports = { dashboard }
 /*function dashboard(req, res) {
     if (req.session.isAdmin) {
       var userStud
