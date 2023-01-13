@@ -23,6 +23,18 @@ const {
   deleteStudent 
 } = require('./controllers/controller.admin');
 
+const {
+  createStudentProf, 
+  deleteStudentProf, 
+  updateProfProf, 
+  updateStudentProf
+} = require('./controllers/controller.profesor');
+
+const {
+  updateStudentStud, 
+  deleteStudentStud
+} = require('./controllers/controller.student');
+
 const secretKey = "88b70c6461025630d4754af0aac3bf99c8128e2e922b2ab42470c7700c013e7b32d8d1fd5dd55f01c3d6dc438c6511d453269dd743b84513074e9425e30eb1c9";
 
 const app = express();
@@ -92,7 +104,15 @@ app.put('/admin/dashboard/update/admin/:id', authMiddleware, updateAdmin);
 app.delete('/admin/dashboard/delete/student/:id', authMiddleware, deleteStudent);
 app.delete('/admin/dashboard/delete/professor/:id', authMiddleware, deleteProfesor);
 
+//functionalities of the professor controller
+app.post('/professor/dashboard/create/student', authMiddleware, createStudentProf);
+app.put('/professor/dashboard/update/student/:id', authMiddleware, updateStudentProf);
+app.put('/professor/dashboard/update/professor/:id', authMiddleware, updateProf);
+app.delete('/professor/dashboard/delete/student/:id', authMiddleware, deleteStudentProf);
 
+//functionalities of the student controller 
+app.put('/student/dashboard/update/student/:id', authMiddleware, updateStudentStud);
+app.delete('/student/dashboard/delete/student/:id', authMiddleware, deleteStudentStud);
 
 // app.get('/dashboard', verifyToken, (req, res) => {
 //   if (req.user.isAdmin) {

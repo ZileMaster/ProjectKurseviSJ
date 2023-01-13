@@ -27,7 +27,7 @@ const getCourseById = async(req, res) => {
 const createCourse = async (req, res) => {
     try{
         console.log(req.user.role)
-        if(req.user.role !== 'professor'){
+        if(req.user.role === 'professor' || req.user.role === 'profesor'){
             return res.status(401).json({ message: 'You are not authorized to create a course.' });
         }
 
@@ -43,7 +43,7 @@ const createCourse = async (req, res) => {
 
 const deleteCourse = async (req, res) => {
     try{
-        if(req.user.role !== 'professor'){
+        if(req.user.role === 'professor' || req.user.role === 'profesor'){
             return res.status(401).json({ message: 'You are not authorized to delete a course.' });
         }
 
@@ -63,7 +63,7 @@ const deleteCourse = async (req, res) => {
 
 const updateCourse = async (req, res) => {
     try{ 
-        if(req.user.role !== 'professor'){
+        if(req.user.role === 'professor' || req.user.role === 'profesor'){
             return res.status(401).json({ message: 'You are not authorized for this action!' });
         }
 
