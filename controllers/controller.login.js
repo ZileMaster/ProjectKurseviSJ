@@ -15,7 +15,7 @@ const login = async (req, res) => {
         let user;
         if (userType === 'admin') {
             user = await admin.findOne({ where: {username: username }});
-        } else if (userType === 'professor') {
+        } else if (userType === 'professor' || userType === 'profesor') {
             user = await profesor.findOne({ where: {username: username }});
         } else if (userType === 'student') {
             user = await student.findOne({ where: {username: username }});

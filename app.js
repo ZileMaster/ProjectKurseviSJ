@@ -35,6 +35,14 @@ const {
   deleteStudentStud
 } = require('./controllers/controller.student');
 
+const { 
+  showNotices, 
+  showOneNotice,
+  postNotice,
+  deleteNotice, 
+  updateNotice
+} = require('./controllers/controller.noticeBoard');
+
 const secretKey = "88b70c6461025630d4754af0aac3bf99c8128e2e922b2ab42470c7700c013e7b32d8d1fd5dd55f01c3d6dc438c6511d453269dd743b84513074e9425e30eb1c9";
 
 const app = express();
@@ -94,6 +102,13 @@ console.log(authMiddleware, dashboard);
 app.get('/dashboard', authMiddleware, dashboard);
 
 app.use('/courses', authMiddleware, coursesRoutes);
+
+//functionalities of the notice board
+app.get('/notice_board', showNotices);
+app.get('/notice_board/info/:id', showOneNotice);
+app.post('/notice_board/info', authMiddleware, postNotice);
+app.delete('/notice_board/info/:id', authMiddleware, deleteNotice);
+app.put('/notice_board/info/:id', authMiddleware, updateNotice);
 
 //functionalities of the admin controller
 app.post('/admin/dashboard/create/student', authMiddleware, createStudent);

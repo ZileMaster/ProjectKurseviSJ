@@ -27,7 +27,7 @@ const getCourseById = async(req, res) => {
 const createCourse = async (req, res) => {
     try{
         console.log(req.user.role)
-        if(req.user.role === 'professor' || req.user.role === 'profesor'){
+        if(req.user.role !== 'professor' || req.user.role !== 'profesor'){
             return res.status(401).json({ message: 'You are not authorized to create a course.' });
         }
 
@@ -49,9 +49,9 @@ const deleteCourse = async (req, res) => {
 
         const courseDel = await course.findOne({ where : { id: req.params.id}});
 
-        if(!courseDel) 
+        if(!courseDel){
             return res.status(404).json({ message: 'Course not found.'});
-
+        }
         await courseDel.destroy();
 
         res.json({ message: 'Course deleted successfully.' });
