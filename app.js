@@ -13,6 +13,15 @@ const jwt = require('jsonwebtoken');
 const { authMiddleware } = require('./controllers/controller.auth');
 const coursesRoutes = require('./controllers/controller.course');
 const bcrypt = require("bcrypt");
+const {
+  createProfessor, 
+  createStudent, 
+  updateAdmin,
+  updateProf, 
+  updateStudent, 
+  deleteProfesor, 
+  deleteStudent 
+} = require('./controllers/controller.admin');
 
 const secretKey = "88b70c6461025630d4754af0aac3bf99c8128e2e922b2ab42470c7700c013e7b32d8d1fd5dd55f01c3d6dc438c6511d453269dd743b84513074e9425e30eb1c9";
 
@@ -35,18 +44,19 @@ app.use(express.static(__dirname));
 //cookie parser
 app.use(cookieParser());
 
-// //podsetnik za mene password je SecretPass1389! za admina! I profesorForTest1234 za profesora!!
-// //kad sam pravio prve migracije nisam sa bcrypt lozinke nego kao obican string
+// // //podsetnik za mene password je SecretPass1389! za admina! I profesorForTest1234 za profesora!!
+// // //kad sam pravio prve migracije nisam sa bcrypt lozinke nego kao obican string
 // async function encryptProfPassword() {
 //   // Find the admin account in the database
-//   const profAccount = await profesor.findOne({ where: { username: "profesorTester1"} });
+//   const profAccount = await admin.findOne({ where: { username: "az_zile01"} });
+//   const password = "SecretPass1389!";
 //   // Hash the admin's plain text password
-//   const hashedPassword = await bcrypt.hash(profAccount.password, 10);
+//   const hashedPassword = await bcrypt.hash(password, 10);
 //   // Update the admin account's password in the database
-//   await profesor.update({ password: hashedPassword }, { where: { id: profAccount.id } });
+//   await admin.update({ password: hashedPassword }, { where: { id: profAccount.id } });
 // }
 
-// encryptProfPassword();
+//encryptProfPassword();
 
 //test
 db.authenticate()
@@ -67,11 +77,22 @@ app.get('/login', (req, res) => {
   res.render('login.ejs');
 });
 
-console.log(authMiddleware, dashboard)
+console.log(authMiddleware, dashboard);
 
 app.get('/dashboard', authMiddleware, dashboard);
 
-app.use('/courses', authMiddleware, coursesRoutes)
+app.use('/courses', authMiddleware, coursesRoutes);
+
+//functionalities of the admin controller
+app.post('/admin/dashboard/create/student', authMiddleware, createStudent);
+app.post('/admin/dashboard/create/professor', authMiddleware, createProfessor);
+app.put('/admin/dashboard/update/professor/:id', authMiddleware, updateProf);
+app.put('/admin/dashboard/update/student/:id', authMiddleware, updateStudent);
+app.put('/admin/dashboard/update/admin/:id', authMiddleware, updateAdmin);
+app.delete('/admin/dashboard/delete/student/:id', authMiddleware, deleteStudent);
+app.delete('/admin/dashboard/delete/professor/:id', authMiddleware, deleteProfesor);
+
+
 
 // app.get('/dashboard', verifyToken, (req, res) => {
 //   if (req.user.isAdmin) {

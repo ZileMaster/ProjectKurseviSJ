@@ -14,7 +14,7 @@ const dashboard = async(req, res, next) => {
             student.findAll({ attributes: ["first_name", "last_name", "username", "email"] }),
             profesor.findAll({ attributes: ["first_name", "last_name", "username", "email"] })
         ]);
-    } else if (req.user.role === 'professor') {
+    } else if (req.user.role === 'professor' || req.user.role === 'profesor') {
         data = await student.findAll({ attributes: ["first_name", "last_name", "username", "email"] });
     } else if (req.user.role === 'student') {
       data = await student.findOne({ where: { id: req.user.id }, attributes: ["first_name", "last_name", "username", "email"] });

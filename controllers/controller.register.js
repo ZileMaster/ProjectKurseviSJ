@@ -40,14 +40,6 @@ const register = async (req, res) => {
                 group_id: 1,
 
             });
-        } else if (userType === 'professor') {
-            newUser = profesor.build({
-                first_name,
-                last_name,
-                username,
-                email,
-                password: hashedPassword, 
-            });
         }
 
         console.log(newUser)

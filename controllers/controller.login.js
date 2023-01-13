@@ -28,6 +28,7 @@ const login = async (req, res) => {
 
         // Compare the plaintext password with the hashed password in the database
         const isMatch = await bcrypt.compare(password, user.password);
+        console.log(password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Username or password is incorrect' });
         }

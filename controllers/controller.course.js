@@ -54,10 +54,10 @@ const deleteCourse = async (req, res) => {
 
         await courseDel.destroy();
 
-        res.json({ message: 'Course deleted successfully' });
+        res.json({ message: 'Course deleted successfully.' });
     } catch(error) {
         console.error(error);
-        res.status(500).json({ message: 'Error deleting the course' });
+        res.status(500).json({ message: 'Error deleting the course.' });
     }
 }
 
