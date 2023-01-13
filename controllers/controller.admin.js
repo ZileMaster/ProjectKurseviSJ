@@ -239,6 +239,10 @@ const updateAdmin = async(req, res) => {
 
         const { first_name, last_name, username, firstPassword, email, group_id, attendance } = req.body;
 
+        if(req.params.id != req.user.id){
+            return res.status(402).json({ message: "User session timed out "});
+        }
+        
         if(firstPassword){
             const password = await bcrypt.hash(firstPassword, 10);
         

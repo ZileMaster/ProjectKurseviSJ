@@ -12,6 +12,10 @@ const createStudentProf = async( req, res) => {
             return res.status(401).json({ message: 'You are not authorized for this action.'});
         }
 
+        if(req.params.id != req.user.id){
+            return res.status(402).json({ message: "User session timed out "});
+        }
+
         const { first_name, last_name, username, firstPassword, email, group_id } = req.body;
         
         const password = await bcrypt.hash(firstPassword, 10);

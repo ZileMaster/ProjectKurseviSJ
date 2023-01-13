@@ -14,10 +14,9 @@ const updateStudentStud = async(req, res) => {
 
         const { first_name, last_name, username, firstPassword, email, group_id, attendance } = req.body;
 
-        const idPage = req.params.id; 
-        if(idPage !== req.user.id){
-            return res.status(402).json({ message: "User session timed out "});
-        }
+         if(req.params.id != req.user.id){
+             return res.status(402).json({ message: "User session timed out "});
+         }
 
         const stud = await student.findOne({ where: { id: req.params.id }});
 
@@ -76,8 +75,7 @@ const deleteStudentStud = async(req, res) => {
             return res.status(401).json({ message: 'You are not authorized for this action.'});
         }
 
-        const idPage = req.params.id; 
-        if(idPage !== req.user.id){
+        if(req.params.id != req.user.id){
             return res.status(402).json({ message: "User session timed out "});
         }
 
