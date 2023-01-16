@@ -12,7 +12,13 @@ const { dashboard } = require('./controllers/controller.dashboard');
 const jwt = require('jsonwebtoken');
 const { authMiddleware } = require('./controllers/controller.auth');
 const coursesRoutes = require('./controllers/controller.course');
+const lectureRoutes = require('./controllers/controllers.lecture');
 const bcrypt = require("bcrypt");
+
+const {
+  updateComm, deleteComment, postComment, showComments, showOneComment
+} = require('./controllers/controller.course_comment');
+
 const {
   createProfessor, 
   createStudent, 
@@ -103,6 +109,8 @@ app.get('/dashboard', authMiddleware, dashboard);
 
 app.use('/courses', authMiddleware, coursesRoutes);
 
+app.use('/lectures', authMiddleware, lectureRoutes);
+
 //functionalities of the notice board
 app.get('/notice_board', showNotices);
 app.get('/notice_board/info/:id', showOneNotice);
@@ -128,6 +136,11 @@ app.delete('/professor/dashboard/delete/student/:id', authMiddleware, deleteStud
 //functionalities of the student controller 
 app.put('/student/dashboard/update/student/:id', authMiddleware, updateStudentStud);
 app.delete('/student/dashboard/delete/student/:id', authMiddleware, deleteStudentStud);
+
+//getting the views in place: 
+app.post('/login', login);
+app.post('/register', register);
+app.get('/dashboard', authMiddleware, dashboard);
 
 // app.get('/dashboard', verifyToken, (req, res) => {
 //   if (req.user.isAdmin) {

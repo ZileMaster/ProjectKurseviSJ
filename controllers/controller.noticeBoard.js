@@ -33,6 +33,17 @@ const postNotice = async(req, res) => {
         if(req.user.role !== 'professor'){
             return res.status(401).json({ message: 'You are not authorized for this action.'});
         }
+
+            // Validation: check if text field is empty
+        if(!req.body.text){
+            return res.status(400).json({ message: 'Text field is required.' });
+        }
+
+        // Validation: check if notice_board_id field is empty
+        if(!req.body.notice_board_id){
+            return res.status(400).json({ message: 'Notice board id field is required.' });
+        }
+        
         const { text, notice_board_id } = req.body;
         const newNotice = await info.create({ text, notice_board_id});
         return res.status(200).json({ info: newNotice });

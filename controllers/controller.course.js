@@ -1,6 +1,7 @@
 const course = require('../models').course;
 const express = require('express');
 const router = express.Router();
+const Sequelize = require('sequelize');
 
 const getAllCourses = async(req, res) => {
     try {
@@ -32,6 +33,16 @@ const createCourse = async (req, res) => {
         }
 
         const { name, profesor_id } = req.body;
+
+        if(!name){
+            return res.status(400).json({ message: 'Please provide a course name.' });
+        }
+
+        const existingCourse = await course.findOne({ where: { name } });
+        if(existingCourse){
+        return res.status(409).json({ message: 'This course already exists.' });
+    }
+
         const newCourse = await course.create({ name, profesor_id });
         return res.status(200).json({ course: newCourse })
 
@@ -63,7 +74,7 @@ const deleteCourse = async (req, res) => {
 
 const updateCourse = async (req, res) => {
     try{ 
-        if(req.user.role === 'professor' || req.user.role === 'profesor'){
+        if(req.user.role === 'profesor'){
             return res.status(401).json({ message: 'You are not authorized for this action!' });
         }
 
@@ -71,6 +82,10 @@ const updateCourse = async (req, res) => {
 
         if(!courseUpdate)
             return res.status(404).json({ message: 'Course not fount.'});
+
+        const courseTaken = await course.findOne({ where: { name: req.body.name, profesor_id: { [Sequelize.Op.not]: req.user.id } } });
+        if(courseTaken)
+            return res.status(409).json({ message: 'Course is already taken by another professor' });
         
         await courseUpdate.update(req.body);  
         

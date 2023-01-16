@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'group',
+    freezeTableName: true,
   });
   return group;
 };

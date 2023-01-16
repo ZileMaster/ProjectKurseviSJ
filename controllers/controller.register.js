@@ -5,6 +5,7 @@ const profesor = require('../models/').profesor;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const sequelize = require('sequelize')
+const validator = require('validator');
 
 const register = async (req, res) => {
     const { first_name, last_name, username, email, password, userType } = req.body.user;
@@ -21,6 +22,20 @@ const register = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'User is already taken' });
         }
+
+            // Check if email is valid
+        if(!validator.isEmail(email)){
+            return res.status(400).json({ message: 'Email is not valid' });
+        }
+        // Check if username is at least 5 characters
+        if(username.length < 5){
+            return res.status(400).json({ message: 'Username must be at least 5 characters' });
+        }
+        // Check if password is at least 8 characters
+        if(password.length < 8){
+            return res.status(400).json({ message: 'Password must be at least 8 characters' });
+        }
+        
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
         

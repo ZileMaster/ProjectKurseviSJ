@@ -237,7 +237,15 @@ const updateAdmin = async(req, res) => {
             return res.status(404).json({ message: 'Non-existant admin selected.'});
         }
 
-        const { first_name, last_name, username, firstPassword, email, group_id, attendance } = req.body;
+        const { first_name, last_name, username, firstPassword, email} = req.body;
+
+        if(!first_name || !last_name || !username || !email){
+            return res.status(400).json({ message: 'Missing required field'});
+        }
+
+        if(!emailRegex.test(email)){
+            return res.status(400).json({ message: 'Invalid email format'});
+        }
 
         if(req.params.id != req.user.id){
             return res.status(402).json({ message: "User session timed out "});

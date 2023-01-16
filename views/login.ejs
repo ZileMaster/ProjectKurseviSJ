@@ -1,21 +1,47 @@
 <h1> Login page</h1>
-<form action= "/login" method="POST">
+<body>
+<form id="login-form" action= "/login" method="POST">
     <div>
         <label for="username">Userame</label>
-        <input type="text" id="username" name="username"/>
+        <input type="text" id="username" name="user[username]"/>
     </div>
     <div>
         <label for="password">Password</label>
-        <input type="password" id="password" name="password"/>
+        <input type="password" id="password" name="user[password]"/>
     </div>
     <div>
-        <input type="radio" id="admin" name="type" value="admin">
+        <input type="radio" id="admin" name="user[userType]" value="admin">
         <label for="admin">admin</label><br>
-        <input type="radio" id="profesor" name="type" value="profesor">
-        <label for="profesor">prof</label><br>
-        <input type="radio" id="user" name="type" value="user">
-        <label for="user">user</label>
+        <input type="radio" id="professor" name="user[userType]" value="professor">
+        <label for="professor">prof</label><br>
+        <input type="radio" id="student" name="user[userType]" value="student">
+        <label for="student">user</label>
     </div>
     <button type="submit">Login</button>
 </form>
+
 <a href="/signup">Signup</a>
+<script>
+    document.querySelector("form").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        // Get the token and redirect URL from the server
+        const { token, redirectUrl } = await (await fetch("/login", {
+            method: "POST",
+            body: JSON.stringify({
+                user: {
+                    username: document.querySelector("#username").value,
+                    password: document.querySelector("#password").value,
+                    userType: document.querySelector('input[name="user[userType]"]:checked').value
+                }
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })).json();
+        // Set the token in the browser's local storage
+        localStorage.setItem("token", token);
+        // Redirect the user to the dashboard
+        window.location.href = redirectUrl;
+    });
+</script>
+</body>

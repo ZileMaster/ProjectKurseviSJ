@@ -17,8 +17,26 @@ const createStudentProf = async( req, res) => {
         }
 
         const { first_name, last_name, username, firstPassword, email, group_id } = req.body;
+
+        if (existingUser) {
+            return res.status(400).json({ message: 'Email is already taken' });
+        }
+    
+        if(username.length < 5){
+            return res.status(400).json({ message: 'Username should be at least 5 characters long' });
+        }
+    
+        if(password.length < 8){
+            return res.status(400).json({ message: 'Password should be at least 8 characters long' });
+        }
+    
+        //email validation 
+        if(!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)){
+            return res.status(400).json({ message: 'Invalid email address' });
+        }
         
         const password = await bcrypt.hash(firstPassword, 10);
+
         const newStud = await student.create
             ({ 
                 first_name, 
