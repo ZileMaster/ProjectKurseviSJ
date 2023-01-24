@@ -23,7 +23,7 @@ const showOneNotice = async(req, res) => {
         res.status(200).json({ notice });
     }catch(error){
         console.error(error);
-        res.status(500).json({ message: 'Error geting the data.'});
+        res.status(500).json({ message: 'Error geting the data'});
     }
 }
 
