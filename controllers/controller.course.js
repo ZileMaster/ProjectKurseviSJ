@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const Sequelize = require('sequelize');
 
-const getAllCourses = async(req, res) => {
+const show = async(req, res) => {
     try {
         const courses = await course.findAll();
         res.json(courses);
@@ -12,7 +12,7 @@ const getAllCourses = async(req, res) => {
     }
 }
 
-const getCourseById = async(req, res) => {
+const showOne = async(req, res) => {
     try {
         const course = await course.findOne({ where : { id: req.params}});
         if (!course) {
@@ -25,7 +25,7 @@ const getCourseById = async(req, res) => {
     }
 }
 
-const createCourse = async (req, res) => {
+const create = async (req, res) => {
     try{
         console.log(req.user.role)
         if(req.user.role !== 'professor' || req.user.role !== 'profesor'){
@@ -72,7 +72,7 @@ const deleteCourse = async (req, res) => {
     }
 }
 
-const updateCourse = async (req, res) => {
+const update = async (req, res) => {
     try{ 
         if(req.user.role === 'profesor'){
             return res.status(401).json({ message: 'You are not authorized for this action!' });
@@ -96,10 +96,4 @@ const updateCourse = async (req, res) => {
     }
 }
 
-router.get('/', getAllCourses);
-router.get('/:id', getCourseById);
-router.post('/', createCourse);
-router.delete('/:id', deleteCourse);
-router.put('/:id', updateCourse);
-
-module.exports = router;
+module.exports = { create, show, showOne, update, deleteCourse };

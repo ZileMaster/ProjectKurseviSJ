@@ -1,12 +1,12 @@
 express = require('express');
-const noticeBoard = require('../models/').notice_board;
-const info = require('../models/').info;
-const profesor = require('../models/').profesor;
+const noticeBoard = require('../models').notice_board;
+const info = require('../models').info;
+const profesor = require('../models').profesor;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const sequelize = require('sequelize');
 
-const showNotices = async(req, res) => {
+const show = async(req, res) => {
    
     try{
         const notices = await info.findAll({ where: { notice_board_id: 1}});
@@ -17,7 +17,7 @@ const showNotices = async(req, res) => {
     }
 }
 
-const showOneNotice = async(req, res) => {
+const showOne = async(req, res) => {
     try{
         const notice = await info.findOne({ where: { id: req.params.id }});
         res.status(200).json({ notice });
@@ -27,7 +27,7 @@ const showOneNotice = async(req, res) => {
     }
 }
 
-const postNotice = async(req, res) => {
+const post = async(req, res) => {
     try{ 
         console.log(req.user.role)
         if(req.user.role !== 'professor'){
@@ -74,7 +74,7 @@ const deleteNotice = async(req, res) => {
     }
 }
 
-const updateNotice = async(req, res) => {
+const update = async(req, res) => {
     try{
         console.log(req.user.role)
         if(req.user.role !== 'professor'){
@@ -96,4 +96,4 @@ const updateNotice = async(req, res) => {
     }
 }
 
-module.exports = { showNotices, showOneNotice, postNotice, deleteNotice, updateNotice };
+module.exports = { show, showOne, post, deleteNotice, update };

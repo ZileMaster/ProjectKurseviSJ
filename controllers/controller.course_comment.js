@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 const sequelize = require('sequelize');
 const comment = require('../models/').course_comment;
 
-const showComments = async(req, res) => {
+const show = async(req, res) => {
    
     try{
         const comm = await info.findAll({ where: { student_id: req.body.student_id }});
@@ -19,7 +19,7 @@ const showComments = async(req, res) => {
     }
 }
 
-const showOneComment = async(req, res) => {
+const showOne = async(req, res) => {
     try{
         const comm = await comment.findOne({ where: { id: req.params.id }});
         res.status(200).json({ comm });
@@ -29,7 +29,7 @@ const showOneComment = async(req, res) => {
     }
 }
 
-const postComment = async(req, res) => {
+const create = async(req, res) => {
     try{ 
         console.log(req.user.role)
         if(req.user.role !== 'student'){
@@ -71,7 +71,7 @@ const deleteComment = async(req, res) => {
     }
 }
 
-const updateComm = async(req, res) => {
+const update = async(req, res) => {
     try{
         console.log(req.user.role)
         if(req.user.role !== 'student'){
@@ -93,4 +93,4 @@ const updateComm = async(req, res) => {
     }
 }
 
-module.exports = { showComments, showOneComment, postComment, deleteComment, updateComm };
+module.exports = { show, showOne, create, deleteComment, update };

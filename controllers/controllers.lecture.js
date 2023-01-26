@@ -4,7 +4,7 @@ const router = express.Router();
 const Sequelize = require('sequelize');
 const lecture = require('../models').lecture;
 
-const getAllLectures = async(req, res) => {
+const show = async(req, res) => {
     try {
         const lect = await lecture.findAll();
         res.json(lect);
@@ -13,7 +13,7 @@ const getAllLectures = async(req, res) => {
     }
 }
 
-const getLectById = async(req, res) => {
+const showOne = async(req, res) => {
     try {
         const lect = await lecture.findOne({ where : { id: req.params}});
         if (!lect) {
@@ -26,7 +26,7 @@ const getLectById = async(req, res) => {
     }
 }
 
-const createLect = async (req, res) => {
+const create = async (req, res) => {
     try{
         console.log(req.user.role)
         if(req.user.role !== 'professor' || req.user.role !== 'profesor'){
@@ -53,7 +53,7 @@ const createLect = async (req, res) => {
     }
 }
 
-const deleteLect = async (req, res) => {
+const deleteLecture = async (req, res) => {
     try{
         if(req.user.role === 'professor' || req.user.role === 'profesor'){
             return res.status(401).json({ message: 'You are not authorized to delete a course.' });
@@ -73,7 +73,7 @@ const deleteLect = async (req, res) => {
     }
 }
 
-const updateLecture = async (req, res) => {
+const update = async (req, res) => {
     try{ 
         if(req.user.role === 'profesor'){
             return res.status(401).json({ message: 'You are not authorized for this action!' });
@@ -93,10 +93,4 @@ const updateLecture = async (req, res) => {
     }
 }
 
-router.get('/', getAllLectures);
-router.get('/:id', getLectById);
-router.post('/', createLect);
-router.delete('/:id', deleteLect);
-router.put('/:id', updateLecture);
-
-module.exports = router;
+module.exports = { show, showOne, create, update, deleteLecture };
